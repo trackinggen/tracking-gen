@@ -1,0 +1,69 @@
+import getData from './utils/getData.js'
+import express from 'express'
+import path from 'path'
+import axios from 'axios'
+import { genMultiple } from './utils/genCode.js'
+
+const hostname = 'localhost'
+const port = process.env.PORT || 8080
+const app = express()
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(process.cwd(), '/index.html'))
+})
+
+app.get('/melhorrastreio/:baseCode', (req, res) => {
+  /* const codes = genMultiple('LV883776349CN', 1000) */
+  const baseCode = req.params.baseCode
+  const codes = genMultiple(baseCode, 1000)
+  const results = []
+
+  const promises = codes.map((code) => {
+    return new Promise((resolve, reject) => {
+      axios
+        .post('https://novo.melhorrastreio.com.br/graphql', {
+          query:
+            'mutation searchParcel ($tracker: TrackerSearchInput!) {\n  result: searchParcel (tracker: $tracker) {\n    id\n    createdAt\n    updatedAt\n    lastStatus\n    lastSyncTracker\n    pudos {\n      type\n      trackingCode\n    }\n    trackers {\n      type\n      shippingService\n      trackingCode\n    }\n    trackingEvents {\n      trackerType\n      trackingCode\n      createdAt\n      translatedEventId\n      originalTitle\n      to\n      from\n    }\n    pudoEvents {\n      trackingCode\n      createdAt\n      translatedEventId\n      originalTitle\n      from\n      to\n      pudoType\n    }\n  }\n}',
+          variables: {
+            tracker: {
+              trackingCode: code,
+              type: 'correios',
+            },
+          },
+        })
+        .then((r) => {
+          /* results.push(r.data) */
+          const object = r.data.data.result
+          if (object) {
+            const lastActivity =
+              object.trackingEvents[object.trackingEvents.length - 1]
+            const time = new Date(lastActivity.createdAt).getTime()
+            results.push({
+              time,
+              code: lastActivity.trackingCode,
+            })
+          }
+          resolve()
+        })
+        .catch((e) => {
+          reject(e)
+        })
+    })
+  })
+
+  Promise.all(promises).then(() => {
+    results.sort((a, b) => {
+      return new Date(b.time) - new Date(a.time)
+    })
+    res.json(results)
+  })
+})
+
+app.get('/cainiao/:baseCode', (req, res) => {
+  getData(req, res)
+})
+
+app.listen(port, (error) => {
+  if (error) throw error
+  console.log(`Server running at http://${hostname}:${port}/`)
+})
