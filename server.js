@@ -12,10 +12,10 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(process.cwd(), '/index.html'))
 })
 
-app.get('/melhorrastreio/:baseCode', (req, res) => {
-  /* const codes = genMultiple('LV883776349CN', 1000) */
+app.get('/melhorrastreio/:baseCode/:range?', (req, res) => {
   const baseCode = req.params.baseCode
-  const codes = genMultiple(baseCode, 1000)
+  const range = req.params?.range || 0
+  const codes = genMultiple({ code: baseCode, range })
   const results = []
 
   const promises = codes.map((code) => {

@@ -15,9 +15,27 @@
     <div class="row">
       <div class="col-12">
         <div class="d-flex flex-column justify-content-center align-items-center py-5" style="min-height: 100vh;">
-          <div class="form-floating" style="width: 300px;">
-            <input id="code-input" type="text" class="form-control" placeholder="Código do rastreio">
-            <label for="code-input"><i class="bi bi-truck me-2"></i>Código do rastreio</label>
+          <div class="d-flex">
+            <div class="form-floating flex-grow-1" style="width: 300px;">
+              <input id="code-input" type="text" class="form-control" placeholder="Código do rastreio">
+              <label for="code-input"><i class="bi bi-truck me-2"></i>Código do rastreio</label>
+            </div>
+            <div class="form-floating ms-3" style="width: 150px;">
+
+              <select id="range-input" class="form-select" aria-label="Zona de busca">
+                <option value="0" selected>0 - 1000</option>
+                <option value="1">1000 - 2000</option>
+                <option value="2">2000 - 3000</option>
+                <option value="3">3000 - 4000</option>
+                <option value="4">4000 - 5000</option>
+                <option value="5">5000 - 6000</option>
+                <option value="6">6000 - 7000</option>
+                <option value="7">7000 - 8000</option>
+                <option value="8">8000 - 9000</option>
+                <option value="9">9000 - 9999</option>
+              </select>
+              <label for="range-input">Zona de busca</label>
+            </div>
           </div>
 
           <button id="search-button" class="btn btn-primary mt-4"><i class="bi bi-search me-2"></i>Buscar</button>
@@ -37,13 +55,18 @@
     crossorigin="anonymous"></script>
   <script>
     const input = document.getElementById("code-input");
+    const rangeInput = document.getElementById("range-input")
     const searchButton = document.getElementById("search-button");
     const loadingSpinner = document.getElementById("loading-spinner")
     const resultsArea = document.getElementById("results-area")
+    let range = 0
 
     const showResults = (data) => {
+      console.log(range)
       const list = document.createElement('ul')
-      list.classList = 'list-group'
+      list.classList = 'list-group mt-3'
+      const searchTitle = document.createElement('h4')
+      searchTitle.innerHTML = `${data.length + 1} resultados (${rangeInput.options[range].innerHTML})`
 
       for (let i = 0; i < data.length; i++) {
         const item = data[i]
@@ -58,34 +81,41 @@
         list.appendChild(el)
       }
 
-      resultsArea.innerHTML = list.outerHTML
+      resultsArea.innerHTML = searchTitle.outerHTML + list.outerHTML
 
       input.removeAttribute('disabled')
+      rangeInput.removeAttribute('disabled')
       searchButton.style.display = 'block'
       loadingSpinner.style.display = 'none'
-
+      range = range == 9 ? 0 : range + 1
+      rangeInput.value = range
     }
 
     searchButton.addEventListener('click', () => {
       searchButton.style.display = 'none'
       loadingSpinner.style.display = 'flex'
       input.setAttribute('disabled', true)
+      rangeInput.setAttribute('disabled', true)
       resultsArea.innerHTML = ''
       let results = []
 
-      fetch('/melhorrastreio/' + input.value).then(res => {
+      fetch(`/melhorrastreio/${input.value}/${rangeInput.value}`).then(res => {
         return res.json()
       }).then((data) => {
         showResults(data)
       }).catch(e => {
         input.removeAttribute('disabled')
+        rangeInput.removeAttribute('disabled')
         searchButton.style.display = 'block'
         loadingSpinner.style.display = 'none'
 
         alert(e.message)
         console.log(e.message)
       })
+    })
 
+    rangeInput.addEventListener('change', (e) => {
+      range = e.target.value
     })
   </script>
 </body>
