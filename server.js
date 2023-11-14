@@ -55,7 +55,16 @@ app.get('/melhorrastreio/:baseCode/:range?', (req, res) => {
     results.sort((a, b) => {
       return new Date(b.time) - new Date(a.time)
     })
-    res.json(results)
+    const recentResults = results.filter((e) => {
+      const objectDate = new Date(e.time)
+      const now = new Date(Date.now())
+
+      const isOlderThan5Days =
+        +now > objectDate.setDate(objectDate.getDate() + 5)
+      if (!isOlderThan5Days) return e
+    })
+
+    res.json(recentResults)
   })
 })
 

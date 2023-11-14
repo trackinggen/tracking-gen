@@ -62,11 +62,10 @@
     let range = 0
 
     const showResults = (data) => {
-      console.log(range)
       const list = document.createElement('ul')
       list.classList = 'list-group mt-3'
       const searchTitle = document.createElement('h4')
-      searchTitle.innerHTML = `${data.length + 1} resultados (${rangeInput.options[range].innerHTML})`
+      searchTitle.innerHTML = `${data.length} resultados (${rangeInput.options[range].innerHTML})`
 
       for (let i = 0; i < data.length; i++) {
         const item = data[i]
@@ -90,6 +89,11 @@
       range = range == 9 ? 0 : range + 1
       rangeInput.value = range
     }
+
+    input.addEventListener('change', () => {
+      range = 0
+      rangeInput.value = 0
+    })
 
     searchButton.addEventListener('click', () => {
       searchButton.style.display = 'none'
