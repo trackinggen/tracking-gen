@@ -34,14 +34,17 @@ app.get('/melhorrastreio/:baseCode/:range?', (req, res) => {
         .then((r) => {
           const object = r.data.data.result
           if (object) {
-            const lastActivity =
-              object.trackingEvents[object.trackingEvents.length - 1]
-            const time = new Date(object.createdAt).getTime()
+            const objectPostedActivity = object.trackingEvents.find(
+              (e) => e.originalTitle == 'Objeto postado'
+            )
 
-            results.push({
-              time,
-              code: lastActivity.trackingCode,
-            })
+            if (objectPostedActivity) {
+              const time = new Date(objectPostedActivity.createdAt).getTime()
+              results.push({
+                time,
+                code: objectPostedActivity.trackingCode,
+              })
+            }
           }
           resolve()
         })
