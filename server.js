@@ -32,12 +32,12 @@ app.get('/melhorrastreio/:baseCode/:range?', (req, res) => {
           },
         })
         .then((r) => {
-          /* results.push(r.data) */
           const object = r.data.data.result
           if (object) {
             const lastActivity =
               object.trackingEvents[object.trackingEvents.length - 1]
-            const time = new Date(lastActivity.createdAt).getTime()
+            const time = new Date(object.createdAt).getTime()
+
             results.push({
               time,
               code: lastActivity.trackingCode,
