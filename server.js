@@ -44,9 +44,9 @@ app.get('/melhorrastreio/:baseCode/:range?', (req, res) => {
                 time,
                 code: objectPostedActivity.trackingCode,
               })
-              resolve()
             }
           }
+          resolve()
         })
         .catch((e) => {
           reject(e)
