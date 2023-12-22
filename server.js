@@ -21,7 +21,7 @@ app.get('/melhorrastreio/:baseCode/:range?', (req, res) => {
   const promises = codes.map((code) => {
     return new Promise((resolve, reject) => {
       axios
-        .post('https://novo.melhorrastreio.com.br/graphql', {
+        .post('https://api.melhorrastreio.com.br/graphql', {
           query:
             'mutation searchParcel ($tracker: TrackerSearchInput!) {\n  result: searchParcel (tracker: $tracker) {\n    id\n    createdAt\n    updatedAt\n    lastStatus\n    lastSyncTracker\n    pudos {\n      type\n      trackingCode\n    }\n    trackers {\n      type\n      shippingService\n      trackingCode\n    }\n    trackingEvents {\n      trackerType\n      trackingCode\n      createdAt\n      translatedEventId\n      originalTitle\n      to\n      from\n    }\n    pudoEvents {\n      trackingCode\n      createdAt\n      translatedEventId\n      originalTitle\n      from\n      to\n      pudoType\n    }\n  }\n}',
           variables: {
