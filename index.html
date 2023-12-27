@@ -1,127 +1,174 @@
 <!doctype html>
 <html lang="en" data-bs-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Gerador</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+  </head>
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Gerador</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-</head>
-
-<body class="bg-dark">
-  <div class="container">
-    <div class="row">
-      <div class="col-12">
-        <div class="d-flex flex-column justify-content-center align-items-center py-5" style="min-height: 100vh;">
-          <div class="d-flex">
-            <div class="form-floating flex-grow-1" style="width: 300px;">
-              <input id="code-input" type="text" class="form-control" placeholder="Código do rastreio">
-              <label for="code-input"><i class="bi bi-truck me-2"></i>Código do rastreio</label>
+  <body class="bg-dark">
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <div
+            class="d-flex flex-column justify-content-center align-items-center py-5"
+            style="min-height: 100vh"
+          >
+            <div class="d-flex">
+              <div class="form-floating flex-grow-1" style="width: 300px">
+                <input
+                  id="code-input"
+                  type="text"
+                  class="form-control"
+                  placeholder="Código do rastreio"
+                />
+                <label for="code-input">
+                  <i class="bi bi-truck me-2"></i>
+                  Código do rastreio
+                </label>
+              </div>
+              <div class="form-floating ms-3" style="width: 150px">
+                <select
+                  id="range-input"
+                  class="form-select"
+                  aria-label="Zona de busca"
+                >
+                  <option value="0" selected>0 - 1000</option>
+                  <option value="1">1000 - 2000</option>
+                  <option value="2">2000 - 3000</option>
+                  <option value="3">3000 - 4000</option>
+                  <option value="4">4000 - 5000</option>
+                  <option value="5">5000 - 6000</option>
+                  <option value="6">6000 - 7000</option>
+                  <option value="7">7000 - 8000</option>
+                  <option value="8">8000 - 9000</option>
+                  <option value="9">9000 - 9999</option>
+                </select>
+                <label for="range-input">Zona de busca</label>
+              </div>
             </div>
-            <div class="form-floating ms-3" style="width: 150px;">
 
-              <select id="range-input" class="form-select" aria-label="Zona de busca">
-                <option value="0" selected>0 - 1000</option>
-                <option value="1">1000 - 2000</option>
-                <option value="2">2000 - 3000</option>
-                <option value="3">3000 - 4000</option>
-                <option value="4">4000 - 5000</option>
-                <option value="5">5000 - 6000</option>
-                <option value="6">6000 - 7000</option>
-                <option value="7">7000 - 8000</option>
-                <option value="8">8000 - 9000</option>
-                <option value="9">9000 - 9999</option>
-              </select>
-              <label for="range-input">Zona de busca</label>
+            <div class="form-floating mt-4">
+              <textarea
+                class="form-control"
+                placeholder="Proxies"
+                id="proxyList"
+                style="width: 400px; height: 200px"
+              ></textarea>
+              <label for="proxyList">Proxies</label>
             </div>
+
+            <button id="search-button" class="btn btn-primary mt-4">
+              <i class="bi bi-search me-2"></i>Buscar
+            </button>
+
+            <div
+              id="loading-spinner"
+              class="mt-4 flex-column align-items-center"
+              style="display: none"
+            >
+              <div class="spinner-border" role="status"></div>
+              <div class="text-secondary mt-2" style="font-size: 14px">
+                Buscando...
+              </div>
+            </div>
+
+            <div id="results-area" class="mt-4"></div>
           </div>
-
-          <button id="search-button" class="btn btn-primary mt-4"><i class="bi bi-search me-2"></i>Buscar</button>
-
-          <div id="loading-spinner" class="mt-4 flex-column align-items-center" style="display: none;">
-            <div class="spinner-border" role="status"></div>
-            <div class="text-secondary mt-2" style="font-size: 14px;">Buscando...</div>
-          </div>
-
-          <div id="results-area" class="mt-4"></div>
         </div>
       </div>
     </div>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-    crossorigin="anonymous"></script>
-  <script>
-    const input = document.getElementById("code-input");
-    const rangeInput = document.getElementById("range-input")
-    const searchButton = document.getElementById("search-button");
-    const loadingSpinner = document.getElementById("loading-spinner")
-    const resultsArea = document.getElementById("results-area")
-    let range = 0
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      const input = document.getElementById('code-input')
+      const rangeInput = document.getElementById('range-input')
+      const searchButton = document.getElementById('search-button')
+      const loadingSpinner = document.getElementById('loading-spinner')
+      const resultsArea = document.getElementById('results-area')
+      const proxyListInput = document.getElementById('proxyList')
+      let range = 0
 
-    const showResults = (data) => {
-      const list = document.createElement('ul')
-      list.classList = 'list-group mt-3'
-      const searchTitle = document.createElement('h4')
-      searchTitle.innerHTML = `${data.length} resultados (${rangeInput.options[range].innerHTML})`
+      const showResults = (data) => {
+        const list = document.createElement('ul')
+        list.classList = 'list-group mt-3'
+        const searchTitle = document.createElement('h4')
+        searchTitle.innerHTML = `${data.length} resultados (${rangeInput.options[range].innerHTML})`
 
-      for (let i = 0; i < data.length; i++) {
-        const item = data[i]
-        const el = document.createElement('li')
-        const date = new Date(item.time)
-        const formattedDate = date.toLocaleString('pt-BR', {
-          hour12: false,
-        });
+        for (let i = 0; i < data.length; i++) {
+          const item = data[i]
+          const el = document.createElement('li')
+          const date = new Date(item.time)
+          const formattedDate = date.toLocaleString('pt-BR', {
+            hour12: false,
+          })
 
-        el.classList = 'list-group-item p-1 d-flex align-items-center'
-        el.innerHTML = `<div class="fw-bold text-white p-1 px-2 rounded bg-primary">${item.code}</div><div class="ms-2"><span class="text-secondary">Postado em:</span> <span class="fw-bold">${formattedDate}</span></div>`
-        list.appendChild(el)
-      }
+          el.classList = 'list-group-item p-1 d-flex align-items-center'
+          el.innerHTML = `<div class="fw-bold text-white p-1 px-2 rounded bg-primary">${item.code}</div><div class="ms-2"><span class="text-secondary">Postado em:</span> <span class="fw-bold">${formattedDate}</span></div>`
+          list.appendChild(el)
+        }
 
-      resultsArea.innerHTML = searchTitle.outerHTML + list.outerHTML
+        resultsArea.innerHTML = searchTitle.outerHTML + list.outerHTML
 
-      input.removeAttribute('disabled')
-      rangeInput.removeAttribute('disabled')
-      searchButton.style.display = 'block'
-      loadingSpinner.style.display = 'none'
-      range = range == 9 ? 0 : range + 1
-      rangeInput.value = range
-    }
-
-    input.addEventListener('change', () => {
-      range = 0
-      rangeInput.value = 0
-    })
-
-    searchButton.addEventListener('click', () => {
-      searchButton.style.display = 'none'
-      loadingSpinner.style.display = 'flex'
-      input.setAttribute('disabled', true)
-      rangeInput.setAttribute('disabled', true)
-      resultsArea.innerHTML = ''
-      let results = []
-
-      fetch(`/melhorrastreio/${input.value}/${rangeInput.value}`).then(res => {
-        return res.json()
-      }).then((data) => {
-        showResults(data)
-      }).catch(e => {
         input.removeAttribute('disabled')
         rangeInput.removeAttribute('disabled')
         searchButton.style.display = 'block'
         loadingSpinner.style.display = 'none'
+        range = range == 9 ? 0 : range + 1
+        rangeInput.value = range
+      }
 
-        alert(e.message)
-        console.log(e.message)
+      input.addEventListener('change', () => {
+        range = 0
+        rangeInput.value = 0
       })
-    })
 
-    rangeInput.addEventListener('change', (e) => {
-      range = e.target.value
-    })
-  </script>
-</body>
+      searchButton.addEventListener('click', () => {
+        searchButton.style.display = 'none'
+        loadingSpinner.style.display = 'flex'
+        input.setAttribute('disabled', true)
+        rangeInput.setAttribute('disabled', true)
+        resultsArea.innerHTML = ''
+        let results = []
 
+        fetch(`/melhorrastreio/${input.value}/${rangeInput.value}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ proxyList: proxyListInput.value.split('\n') }),
+        })
+          .then((res) => {
+            return res.json()
+          })
+          .then((data) => {
+            showResults(data)
+          })
+          .catch((e) => {
+            input.removeAttribute('disabled')
+            rangeInput.removeAttribute('disabled')
+            searchButton.style.display = 'block'
+            loadingSpinner.style.display = 'none'
+
+            alert(e.message)
+            console.log(e.message)
+          })
+      })
+
+      rangeInput.addEventListener('change', (e) => {
+        range = e.target.value
+      })
+    </script>
+  </body>
 </html>
