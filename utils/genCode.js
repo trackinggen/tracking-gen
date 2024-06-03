@@ -14,7 +14,6 @@ export const genMultiple = ({ code, range }) => {
   const result = []
   const r = range * 1000
   const max = r + (range == 9 ? 999 : 1000)
-  console.log(r, max)
 
   for (let index = r; index < max; index++) {
     result.push(genCode(code, index))

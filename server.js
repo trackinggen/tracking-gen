@@ -37,8 +37,10 @@ app.post('/melhorrastreio/:baseCode/:range?', (req, res) => {
     }
   }
 
-  proxyList.forEach((proxyString, index) => {
-    proxies.push(createProxyObject(proxyString))
+  proxyList.forEach((proxyString) => {
+    if (proxyString) {
+      proxies.push(createProxyObject(proxyString))
+    }
   })
 
   console.log(`Proxy: ${JSON.stringify(proxies?.[proxyIndex] || {})}`)
@@ -95,7 +97,6 @@ app.post('/melhorrastreio/:baseCode/:range?', (req, res) => {
         })
         .then((r) => {
           const object = r.data.data.result
-          // console.log('request index: ', index)
           if (object) {
             const objectPostedActivity = object.trackingEvents.find(
               (e) => e.originalTitle == 'Objeto postado'
