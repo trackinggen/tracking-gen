@@ -120,7 +120,7 @@ app.post('/melhorrastreio/:baseCode/:range?', (req, res) => {
           const object = r.data.data.result
           if (object) {
             const objectPostedActivity = object.trackingEvents.find(
-              (e) => e.originalTitle == 'Objeto postado'
+              (e) => e.description == 'Objeto postado'
             )
 
             if (objectPostedActivity) {
