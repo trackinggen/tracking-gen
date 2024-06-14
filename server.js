@@ -3,7 +3,6 @@ import express from 'express'
 import path from 'path'
 import axios from 'axios'
 import { genMultiple } from './utils/genCode.js'
-import url from 'url'
 
 const hostname = 'localhost'
 const port = process.env.PORT || 8080
@@ -120,7 +119,6 @@ app.post('/melhorrastreio/:baseCode/:range?', (req, res) => {
         .then((r) => {
           const object = r.data.data.result
           if (object) {
-            // console.log(JSON.stringify(object, null, 2))
             const objectPostedActivity = object.trackingEvents.find(
               (e) =>
                 e?.title == 'Objeto postado' ||
@@ -157,19 +155,22 @@ app.post('/melhorrastreio/:baseCode/:range?', (req, res) => {
 
   Promise.all(promises)
     .then(() => {
-      console.log('results', JSON.stringify(results, null, 2))
       results.sort((a, b) => {
         return new Date(b.time) - new Date(a.time)
       })
+      // console.log('[RESULTS 1]\n', JSON.stringify(results, null, 2))
       const recentResults = results.filter((e) => {
         const objectDate = new Date(e.time)
         const now = new Date(Date.now())
 
         const isOlderThan5Days =
           +now > objectDate.setDate(objectDate.getDate() + 5)
-        return e
         if (!isOlderThan5Days) return e
       })
+      // console.log(
+      //   '[RESULTS FILTERED]\n',
+      //   JSON.stringify(recentResults, null, 2)
+      // )
 
       res.json(recentResults)
     })
