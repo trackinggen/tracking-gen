@@ -72,19 +72,40 @@ app.post('/melhorrastreio/:baseCode/:range?', (req, res) => {
                 trackingCode
                 createdAt
                 translatedEventId
-                originalTitle
+                description
                 to
                 from
+                location {
+                  zipcode
+                  address
+                  locality
+                  number
+                  complement
+                  city
+                  state
+                  country
+                }
                 additionalInfo
               }
               pudoEvents {
+                pudoType
                 trackingCode
                 createdAt
                 translatedEventId
-                originalTitle
+                description
                 from
                 to
-                pudoType
+                location {
+                  zipcode
+                  address
+                  locality
+                  number
+                  complement
+                  city
+                  state
+                  country
+                }
+                additionalInfo
               }
             }
           }`,
