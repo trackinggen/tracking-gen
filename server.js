@@ -118,14 +118,17 @@ app.post('/melhorrastreio/:baseCode/:range?', (req, res) => {
           },
         })
         .then((r) => {
-          console.log(r.data)
           const object = r.data.data.result
           if (object) {
+            // console.log(JSON.stringify(object, null, 2))
             const objectPostedActivity = object.trackingEvents.find(
-              (e) => e.description == 'Objeto postado'
+              (e) =>
+                e?.title == 'Objeto postado' ||
+                e?.description == 'Objeto postado'
             )
 
             if (objectPostedActivity) {
+              console.log(JSON.stringify(objectPostedActivity, null, 2))
               const time = new Date(objectPostedActivity.createdAt).getTime()
               results.push({
                 time,
@@ -154,6 +157,7 @@ app.post('/melhorrastreio/:baseCode/:range?', (req, res) => {
 
   Promise.all(promises)
     .then(() => {
+      console.log('results', JSON.stringify(results, null, 2))
       results.sort((a, b) => {
         return new Date(b.time) - new Date(a.time)
       })
@@ -163,6 +167,7 @@ app.post('/melhorrastreio/:baseCode/:range?', (req, res) => {
 
         const isOlderThan5Days =
           +now > objectDate.setDate(objectDate.getDate() + 5)
+        return e
         if (!isOlderThan5Days) return e
       })
 
