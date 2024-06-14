@@ -3,6 +3,7 @@ import express from 'express'
 import path from 'path'
 import axios from 'axios'
 import { genMultiple } from './utils/genCode.js'
+import url from 'url'
 
 const hostname = 'localhost'
 const port = process.env.PORT || 8080
@@ -24,16 +25,16 @@ app.post('/melhorrastreio/:baseCode/:range?', (req, res) => {
   let proxyIndex = 0
   let tries = 0
 
-  const createProxyObject = (string) => {
-    const urlObj = new URL(string)
+  function createProxyObject(proxyUrl) {
+    const [hostname, port, username, password] = proxyUrl.split(':')
+    const protocol = 'http'
 
     return {
-      host: urlObj.hostname,
-      port: urlObj?.port,
-      auth: urlObj?.username
-        ? { username: urlObj.username, password: urlObj.password }
-        : undefined,
-      protocol: urlObj.protocol.replace(':', ''),
+      hostname,
+      port: port.replace('//', ''),
+      username,
+      password,
+      protocol,
     }
   }
 
@@ -117,6 +118,7 @@ app.post('/melhorrastreio/:baseCode/:range?', (req, res) => {
           },
         })
         .then((r) => {
+          console.log(r.data)
           const object = r.data.data.result
           if (object) {
             const objectPostedActivity = object.trackingEvents.find(
