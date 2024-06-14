@@ -2,13 +2,13 @@ import axios from 'axios'
 import { genMultiple } from './genCode.js'
 
 const getSimpleJsonLink = (codes) => {
-  return `https://global.cainiao.com/global/check.json?&mailNos=${codes.join(
+  return `https://res.17track.net/t2/js/track.min.js?v=98414f628f{codes.join(
     '&mailNos='
   )}`
 }
 
 const getDetailedJsonLink = (codes) => {
-  return `https://global.cainiao.com/global/detail.json?mailNos=${codes.join(
+  return `res.17track.net/t2/js/track.min.js?v=98414f628f{codes.join(
     ','
   )}&lang=en-US&language=en-US`
 }
